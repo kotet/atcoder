@@ -1,5 +1,5 @@
 /+ dub.sdl:
-	name "hello"
+	name "app"
 +/
 import std.array;
 import std.algorithm;

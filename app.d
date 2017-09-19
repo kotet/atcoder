@@ -1,16 +1,17 @@
 import std.algorithm;
 import std.array;
 import std.conv;
+import std.range;
 import std.stdio;
 import std.string;
 import std.traits;
 import std.typecons;
 
-enum INF(T) = T.max / 2;//longの場合10^^18くらい
+enum INF(T) = T.max / 2; //longの場合10^^18くらい
 
 void main()
 {
-	
+
 }
 
 /// graphMatrix[from][to] == cost < INF!T
@@ -35,7 +36,10 @@ string fmt(T)(T[][] graph)
 /// warshallFloyd[from][to] == shortestCost
 T[][] warshallFloyd(T)(T[][] graph)
 {
-	auto result = graph.dup;
+	auto result = new T[][](graph.length, graph.length);
+	foreach (i, ref r; result)
+		r[] = graph[i];
+
 	foreach (relay; 0 .. graph.length)
 		foreach (from; 0 .. graph.length)
 			foreach (to; 0 .. graph.length)

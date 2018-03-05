@@ -5,6 +5,7 @@ echo $BUILD
 $BUILD
 
 echo "Removing old output..."
+mkdir -p output
 rm output/*
 
 for file in `ls input`; do

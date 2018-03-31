@@ -10,7 +10,7 @@ rm output/*
 
 for file in `ls input`; do
     echo -n "Testing $file..."
-    ./app < input/$file > output/$file
+    timeout 5 ./app < input/$file > output/$file
     if diff -q output/$file answer/$file > /dev/null; then
         echo "passed."
         rm output/$file

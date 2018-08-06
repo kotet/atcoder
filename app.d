@@ -1,4 +1,5 @@
 import std.stdio;
+import std.ascii;
 import std.conv;
 import std.string;
 import std.algorithm;
@@ -7,42 +8,61 @@ import std.functional;
 import std.math;
 import core.bitop;
 
+// ABC-104-C
+
 void main()
 {
-    /// ABC089_D
-    long H, W, D;
+    auto dg = readln.chomp.split.map!(to!long);
+    long d = dg[0], g = dg[1];
+    long[] p = new long[](d), c = new long[](d);
+    foreach (i; 0 .. d)
     {
-        auto input = readln.chomp.split(' ').map!(to!long);
-        H = input[0];
-        W = input[1];
-        D = input[2];
-    }
-    long[2][] table = new long[2][](H * W + 1);
-    foreach (h; 0 .. H)
-    {
-        auto input = readln.chomp.split(' ').map!(to!long).array;
-        foreach (w, n; input)
-        {
-            table[n] = [h, w];
-        }
+        auto pc = readln.chomp.split.map!(to!long);
+        p[i] = pc[0];
+        c[i] = pc[1];
     }
 
-    long[] cost = new long[](H * W + 1);
-    foreach (i; D + 1 .. H * W + 1)
-    {
-        cost[i] = cost[i - D] + abs(table[i][0] - table[i - D][0]) + abs(
-                table[i][1] - table[i - D][1]);
-    }
+    g /= 100;
+    c[] /= 100;
+    long[] tmp = new long[](0);
+    solve(p, c, tmp.dup, tmp.dup, iota(0, cast(long) p.length).array, g).writeln;
+}
 
-    auto Q = readln.chomp.to!long;
-    foreach (_; 0 .. Q)
+long solve(long[] p, long[] c, long[] use, long[] notuse, long[] a, long g)
+{
+    if (a.empty)
     {
-        long L, R;
+        long score, cnt;
+
+        foreach (long i; use)
         {
-            auto input = readln.chomp.split(' ').map!(to!long);
-            L = input[0];
-            R = input[1];
+            score += (i + 1) * p[i] + c[i];
+            cnt += p[i];
         }
-        writeln(cost[R] - cost[L]);
+        if (g <= score)
+        {
+            return cnt;
+        }
+        else if (!notuse.empty)
+        {
+            if ((g - score) / (notuse.reduce!max() + 1) <= p[notuse.reduce!max()])
+            {
+                return max(cnt + ((g - score) / (notuse.reduce!max() + 1)), 1);
+            }
+            else
+            {
+                return long.max;
+            }
+        }
+        else
+        {
+            return long.max;
+        }
+    }
+    else
+    {
+        long y = solve(p, c, use ~ a[0], notuse, a[1 .. $], g);
+        long n = solve(p, c, use, notuse ~ a[0], a[1 .. $], g);
+        return min(y, n);
     }
 }

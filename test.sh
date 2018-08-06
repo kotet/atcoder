@@ -4,6 +4,11 @@ echo "Building..."
 echo $BUILD
 $BUILD
 
+if [ ! $? = 0 ]; then
+    echo "Build failed."
+    exit
+fi
+
 echo "Removing old output..."
 mkdir -p output
 rm output/*
@@ -13,7 +18,6 @@ for file in `ls input`; do
     timeout 5 ./app < input/$file > output/$file
     if diff -q output/$file answer/$file > /dev/null; then
         echo "passed."
-        rm output/$file
     else
         echo "failed."
     fi

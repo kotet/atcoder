@@ -20,6 +20,8 @@ T[] aryread(T = long)()
     return readln.split.to!(T[])();
 }
 
+alias sread = () => readln.chomp();
+
 void main()
 {
     // ABC110_D
@@ -32,8 +34,10 @@ void main()
 
     foreach (p; ps)
     {
-        BigInt a = iota(1, p + 1).map!BigInt.reduce!((a, b) => a * b);
-        BigInt b = iota(p).map!BigInt.map!(x => N + x)
+        BigInt a = iota(1, p + 1).map!BigInt
+            .reduce!((a, b) => a * b);
+        BigInt b = iota(p).map!BigInt
+            .map!(x => N + x)
             .reduce!((a, b) => a * b);
         result *= b / a;
     }

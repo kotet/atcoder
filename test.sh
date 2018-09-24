@@ -15,12 +15,16 @@ rm output/*
 
 for file in `ls input`; do
     echo -n "Testing $file..."
-    timeout 5 ./app < input/$file > output/$file
+    timeout 5 ./app < input/$file > output/$file 2>&1
     if diff -q output/$file answer/$file > /dev/null; then
         echo "passed."
     else
         echo "failed."
     fi
+done
+
+for file in `ls input`; do
+    bat output/$file
 done
 
 rm -f app app.o

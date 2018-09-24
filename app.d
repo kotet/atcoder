@@ -1,68 +1,58 @@
-import std.stdio;
-import std.ascii;
-import std.conv;
-import std.string;
+import core.bitop;
 import std.algorithm;
-import std.range;
+import std.ascii;
+import std.bigint;
+import std.conv;
 import std.functional;
 import std.math;
-import core.bitop;
+import std.numeric;
+import std.range;
+import std.stdio;
+import std.string;
 
-// ABC-104-C
+T lread(T = long)()
+{
+    return readln.chomp.to!T();
+}
+
+T[] aryread(T = long)()
+{
+    return readln.split.to!(T[])();
+}
 
 void main()
 {
-    auto dg = readln.chomp.split.map!(to!long);
-    long d = dg[0], g = dg[1];
-    long[] p = new long[](d), c = new long[](d);
-    foreach (i; 0 .. d)
-    {
-        auto pc = readln.chomp.split.map!(to!long);
-        p[i] = pc[0];
-        c[i] = pc[1];
-    }
+    // ABC110_D
+    auto nm = aryread;
+    long N = nm[0];
+    long M = nm[1];
 
-    g /= 100;
-    c[] /= 100;
-    long[] tmp = new long[](0);
-    solve(p, c, tmp.dup, tmp.dup, iota(0, cast(long) p.length).array, g).writeln;
+    auto ps = factorize(M).values;
+    BigInt result = 1;
+
+    foreach (p; ps)
+    {
+        BigInt a = iota(1, p + 1).map!BigInt.reduce!((a, b) => a * b);
+        BigInt b = iota(p).map!BigInt.map!(x => N + x)
+            .reduce!((a, b) => a * b);
+        result *= b / a;
+    }
+    (result % (10 ^^ 9 + 7)).writeln;
 }
 
-long solve(long[] p, long[] c, long[] use, long[] notuse, long[] a, long g)
+long[long] factorize(long x)
 {
-    if (a.empty)
+    long[long] ps;
+    while ((x & 1) == 0)
     {
-        long score, cnt;
-
-        foreach (long i; use)
-        {
-            score += (i + 1) * p[i] + c[i];
-            cnt += p[i];
-        }
-        if (g <= score)
-        {
-            return cnt;
-        }
-        else if (!notuse.empty)
-        {
-            if ((g - score) / (notuse.reduce!max() + 1) <= p[notuse.reduce!max()])
-            {
-                return max(cnt + ((g - score) / (notuse.reduce!max() + 1)), 1);
-            }
-            else
-            {
-                return long.max;
-            }
-        }
-        else
-        {
-            return long.max;
-        }
+        x /= 2;
+        ps[2] = (2 in ps) ? ps[2] + 1 : 1;
     }
-    else
-    {
-        long y = solve(p, c, use ~ a[0], notuse, a[1 .. $], g);
-        long n = solve(p, c, use, notuse ~ a[0], a[1 .. $], g);
-        return min(y, n);
-    }
+    for (long i = 3; i <= x; i += 2)
+        while (x % i == 0)
+        {
+            x /= i;
+            ps[i] = (i in ps) ? ps[i] + 1 : 1;
+        }
+    return ps;
 }

@@ -9,6 +9,11 @@ import std.numeric;
 import std.range;
 import std.stdio;
 import std.string;
+import std.random;
+import std.typecons;
+
+alias sread = () => readln.chomp();
+alias Point2 = Tuple!(long, "y", long, "x");
 
 T lread(T = long)()
 {
@@ -20,43 +25,83 @@ T[] aryread(T = long)()
     return readln.split.to!(T[])();
 }
 
-alias sread = () => readln.chomp();
+void scan(TList...)(ref TList Args)
+{
+    auto line = readln.split();
+    foreach (i, T; TList)
+    {
+        T val = line[i].to!(T);
+        Args[i] = val;
+    }
+}
+
+void minAssign(T, U = T)(ref T dst, U src)
+{
+    dst = cast(T) min(dst, src);
+}
 
 void main()
 {
-    // ABC110_D
-    auto nm = aryread;
-    long N = nm[0];
-    long M = nm[1];
-
-    auto ps = factorize(M).values;
-    BigInt result = 1;
-
-    foreach (p; ps)
+    long H, W;
+    Point2 S, G;
+    scan(H, W);
+    char[][] t;
+    foreach (y; 0 .. H)
     {
-        BigInt a = iota(1, p + 1).map!BigInt
-            .reduce!((a, b) => a * b);
-        BigInt b = iota(p).map!BigInt
-            .map!(x => N + x)
-            .reduce!((a, b) => a * b);
-        result *= b / a;
+        auto cs = sread().to!(char[]);
+        foreach (x, c; cs)
+            if (c == 's')
+            {
+                S = tuple(y, x);
+            }
+            else if (c == 'g')
+            {
+                G = tuple(y, x);
+            }
+        t ~= cs;
     }
-    (result % (10 ^^ 9 + 7)).writeln;
-}
 
-long[long] factorize(long x)
-{
-    long[long] ps;
-    while ((x & 1) == 0)
+    auto r = new long[][](H, W);
+    foreach (row; r)
+        row[] = long.max;
+    r[S.y][S.x] = 0;
+
+    Point2[] queue;
+    queue ~= S;
+
+    while (!queue.empty)
     {
-        x /= 2;
-        ps[2] = (2 in ps) ? ps[2] + 1 : 1;
-    }
-    for (long i = 3; i <= x; i += 2)
-        while (x % i == 0)
+        auto p = queue.front;
+        queue.popFront();
+
+        if (2 < r[p.y][p.x] || t[p.y][p.x] == 'g')
         {
-            x /= i;
-            ps[i] = (i in ps) ? ps[i] + 1 : 1;
+            continue;
         }
-    return ps;
+
+        if (t[p.y][p.x] == '#')
+            r[p.y][p.x]++;
+        if (-1 < p.y - 1 && r[p.y][p.x] < r[p.y - 1][p.x])
+        {
+            r[p.y - 1][p.x] = r[p.y][p.x];
+            queue ~= Point2(p.y - 1, p.x);
+        }
+        if (-1 < p.x - 1 && r[p.y][p.x] < r[p.y][p.x - 1])
+        {
+            r[p.y][p.x - 1] = r[p.y][p.x];
+            queue ~= Point2(p.y, p.x - 1);
+        }
+        if (p.y + 1 < H && r[p.y][p.x] < r[p.y + 1][p.x])
+        {
+            r[p.y + 1][p.x] = r[p.y][p.x];
+            queue ~= Point2(p.y + 1, p.x);
+        }
+        if (p.x + 1 < W && r[p.y][p.x] < r[p.y][p.x + 1])
+        {
+            r[p.y][p.x + 1] = r[p.y][p.x];
+            queue ~= Point2(p.y, p.x + 1);
+        }
+    }
+
+    writeln((r[G.y][G.x] < 3) ? "YES" : "NO");
 }

@@ -1,8 +1,15 @@
 BUILD="sudo docker run --rm -v $PWD:/src -w /src dlanguage/dmd:2.070.1 dmd -m64 -w -O -release -inline app.d"
+DEBUG="sudo docker run --rm -v $PWD:/src -w /src dlanguage/dmd:2.070.1 dmd -g app.d"
 
 echo "Building..."
-echo $BUILD
-$BUILD
+if [ "$1" = "debug" ]; then
+    echo $DEBUG
+    $DEBUG
+else
+    echo $BUILD
+    $BUILD
+fi
+
 
 if [ ! $? = 0 ]; then
     echo "Build failed."

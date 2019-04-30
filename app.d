@@ -1,19 +1,6 @@
-import core.bitop;
-import std.algorithm;
-import std.ascii;
-import std.bigint;
-import std.conv;
-import std.functional;
-import std.math;
-import std.numeric;
-import std.range;
-import std.stdio;
-import std.string;
-import std.random;
-import std.typecons;
-
-alias sread = () => readln.chomp();
-alias Point2 = Tuple!(long, "y", long, "x");
+import core.bitop, std.algorithm, std.ascii, std.bigint, std.conv, std.math,
+    std.functional, std.numeric, std.range, std.stdio, std.string, std.random,
+    std.typecons, std.container;
 
 T lread(T = long)()
 {
@@ -35,73 +22,25 @@ void scan(TList...)(ref TList Args)
     }
 }
 
-void minAssign(T, U = T)(ref T dst, U src)
-{
-    dst = cast(T) min(dst, src);
-}
+alias sread = () => readln.chomp();
+enum MOD = 10 ^^ 9 + 7;
 
 void main()
 {
-    long H, W;
-    Point2 S, G;
-    scan(H, W);
-    char[][] t;
-    foreach (y; 0 .. H)
+    // ABC125-D
+    long N = lread();
+    auto A = aryread();
+    auto dp = new long[][](N + 1, 2);
+    dp[0][] = dp[1][] = long.min / 2;
+    dp[0][0] = 0;
+    // writeln(dp[0]);
+    foreach (i; 0 .. N)
     {
-        auto cs = sread().to!(char[]);
-        foreach (x, c; cs)
-            if (c == 's')
-            {
-                S = tuple(y, x);
-            }
-            else if (c == 'g')
-            {
-                G = tuple(y, x);
-            }
-        t ~= cs;
+        dp[i + 1][0] = dp[i + 1][0].max(dp[i][0] + A[i]);
+        dp[i + 1][0] = dp[i + 1][0].max(dp[i][1] - A[i]);
+
+        dp[i + 1][1] = dp[i + 1][1].max(dp[i][0] - A[i]);
+        dp[i + 1][1] = dp[i + 1][1].max(dp[i][1] + A[i]);
     }
-
-    auto r = new long[][](H, W);
-    foreach (row; r)
-        row[] = long.max;
-    r[S.y][S.x] = 0;
-
-    Point2[] queue;
-    queue ~= S;
-
-    while (!queue.empty)
-    {
-        auto p = queue.front;
-        queue.popFront();
-
-        if (2 < r[p.y][p.x] || t[p.y][p.x] == 'g')
-        {
-            continue;
-        }
-
-        if (t[p.y][p.x] == '#')
-            r[p.y][p.x]++;
-        if (-1 < p.y - 1 && r[p.y][p.x] < r[p.y - 1][p.x])
-        {
-            r[p.y - 1][p.x] = r[p.y][p.x];
-            queue ~= Point2(p.y - 1, p.x);
-        }
-        if (-1 < p.x - 1 && r[p.y][p.x] < r[p.y][p.x - 1])
-        {
-            r[p.y][p.x - 1] = r[p.y][p.x];
-            queue ~= Point2(p.y, p.x - 1);
-        }
-        if (p.y + 1 < H && r[p.y][p.x] < r[p.y + 1][p.x])
-        {
-            r[p.y + 1][p.x] = r[p.y][p.x];
-            queue ~= Point2(p.y + 1, p.x);
-        }
-        if (p.x + 1 < W && r[p.y][p.x] < r[p.y][p.x + 1])
-        {
-            r[p.y][p.x + 1] = r[p.y][p.x];
-            queue ~= Point2(p.y, p.x + 1);
-        }
-    }
-
-    writeln((r[G.y][G.x] < 3) ? "YES" : "NO");
+    writeln(dp[N][0]);
 }

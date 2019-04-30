@@ -18,3 +18,16 @@ long[long] factorize(long x)
         ps[x] = (x in ps) ? ps[x] + 1 : 1;
     return ps;
 }
+
+/// x^^n % m
+T powmod(T=long)(T x, T n, T m)
+{
+    if (n < 1)
+        return 1;
+    if (n & 1)
+    {
+        return x * powmod(x, n - 1, m) % m;
+    }
+    T tmp = powmod(x, n / 2, m);
+    return tmp * tmp % m;
+}

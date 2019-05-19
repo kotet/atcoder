@@ -29,48 +29,59 @@ void main()
 {
     long N, M;
     scan(N, M);
-    auto uf_same = UnionFind(N);
-    auto uf_diff = UnionFind(N);
+    auto uf = UnionFind(N);
     foreach (_; 0 .. M)
     {
         long X, Y, Z;
         scan(X, Y, Z);
-        // if (Z & 1)
-        //     uf_diff.unite(X - 1, Y - 1);
-        // else
-        //     uf_same.unite(X - 1, Y - 1);
-        uf_same.unite(X - 1, Y - 1);
+        uf.unite(X - 1, Y - 1);
     }
-    foreach (i; 0 .. N)
-        uf_same.root(i);
-    // uf_same.writeln();
-    uf_same.sort();
-    uf_same.uniq().walkLength().writeln();
+    uf.size.writeln();
 }
 
-long[] UnionFind(long N)
+struct UnionFind
 {
-    return iota!long(N).array;
-}
+    private long[] rank;
+    long[] data;
+    long size;
 
-long root(long[] uf, long x)
-{
-    if (uf[x] == x)
-        return x;
-    long r = root(uf, uf[x]);
-    uf[x] = r;
-    return r;
-}
+    this(long N)
+    {
+        this.rank = new long[](N);
+        this.data = iota!long(N).array;
+        this.size = N;
+    }
 
-void unite(long[] uf, long x, long y)
-{
-    long rx = root(uf, x);
-    long ry = root(uf, y);
-    if (rx != ry)
-        uf[rx] = ry;
-}
+    long find(long x)
+    {
+        if (data[x] == x)
+            return x;
+        long r = this.find(data[x]);
+        data[x] = r;
+        return r;
+    }
 
-bool same(long[] uf, long x, long y)
-{
-    return root(uf, x) == root(uf, y);
+    void unite(long x, long y)
+    {
+        long rx = this.find(x);
+        long ry = this.find(y);
+        if (rx != ry)
+        {
+            this.size--;
+            if (rank[rx] == rank[ry])
+            {
+                data[rx] = ry;
+                rank[ry]++;
+            }
+            else if (rank[rx] < rank[ry])
+                data[rx] = ry;
+            else
+                data[ry] = rx;
+        }
+    }
+
+    bool isSame(long x, long y)
+    {
+        return this.find(x) == this.find(y);
+    }
 }

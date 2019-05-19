@@ -31,3 +31,30 @@ T powmod(T=long)(T x, T n, T m)
     T tmp = powmod(x, n / 2, m);
     return tmp * tmp % m;
 }
+
+long[] UnionFind(long N)
+{
+    return iota!long(N).array;
+}
+
+long root(long[] uf, long x)
+{
+    if (uf[x] == x)
+        return x;
+    long r = root(uf, uf[x]);
+    uf[x] = r;
+    return r;
+}
+
+void unite(long[] uf, long x, long y)
+{
+    long rx = root(uf, x);
+    long ry = root(uf, y);
+    if (rx != ry)
+        uf[rx] = ry;
+}
+
+bool same(long[] uf, long x, long y)
+{
+    return root(uf, x) == root(uf, y);
+}

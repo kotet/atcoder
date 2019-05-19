@@ -27,20 +27,50 @@ enum MOD = 10 ^^ 9 + 7;
 
 void main()
 {
-    // ABC125-D
-    long N = lread();
-    auto A = aryread();
-    auto dp = new long[][](N + 1, 2);
-    dp[0][] = dp[1][] = long.min / 2;
-    dp[0][0] = 0;
-    // writeln(dp[0]);
-    foreach (i; 0 .. N)
+    long N, M;
+    scan(N, M);
+    auto uf_same = UnionFind(N);
+    auto uf_diff = UnionFind(N);
+    foreach (_; 0 .. M)
     {
-        dp[i + 1][0] = dp[i + 1][0].max(dp[i][0] + A[i]);
-        dp[i + 1][0] = dp[i + 1][0].max(dp[i][1] - A[i]);
-
-        dp[i + 1][1] = dp[i + 1][1].max(dp[i][0] - A[i]);
-        dp[i + 1][1] = dp[i + 1][1].max(dp[i][1] + A[i]);
+        long X, Y, Z;
+        scan(X, Y, Z);
+        // if (Z & 1)
+        //     uf_diff.unite(X - 1, Y - 1);
+        // else
+        //     uf_same.unite(X - 1, Y - 1);
+        uf_same.unite(X - 1, Y - 1);
     }
-    writeln(dp[N][0]);
+    foreach (i; 0 .. N)
+        uf_same.root(i);
+    // uf_same.writeln();
+    uf_same.sort();
+    uf_same.uniq().walkLength().writeln();
+}
+
+long[] UnionFind(long N)
+{
+    return iota!long(N).array;
+}
+
+long root(long[] uf, long x)
+{
+    if (uf[x] == x)
+        return x;
+    long r = root(uf, uf[x]);
+    uf[x] = r;
+    return r;
+}
+
+void unite(long[] uf, long x, long y)
+{
+    long rx = root(uf, x);
+    long ry = root(uf, y);
+    if (rx != ry)
+        uf[rx] = ry;
+}
+
+bool same(long[] uf, long x, long y)
+{
+    return root(uf, x) == root(uf, y);
 }

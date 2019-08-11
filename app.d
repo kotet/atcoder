@@ -1,6 +1,6 @@
 import core.bitop, std.algorithm, std.ascii, std.bigint, std.conv, std.math,
     std.functional, std.numeric, std.range, std.stdio, std.string, std.random,
-    std.typecons, std.container;
+    std.typecons, std.container, std.format;
 
 // dfmt off
 T lread(T = long)(){return readln.chomp.to!T();}
@@ -12,12 +12,29 @@ alias sread = () => readln.chomp();enum MOD = 10 ^^ 9 + 7;
 
 void main()
 {
-    // https://atcoder.jp/contests/chokudai_S002/tasks/chokudai_S002_a
+    // https://atcoder.jp/contests/abc137/tasks/abc137_c
     long N = lread();
-    foreach (_; 0 .. N)
+    long[string] D;
+    foreach (i; 0 .. N)
     {
-        long A, B;
-        scan(A, B);
-        writeln(A * B);
+        char[] S = sread().dup;
+        sort(cast(ubyte[]) S);
+        D[cast(string) S] = D.get(cast(string) S, 0) + 1;
     }
+    D.values.map!((x) => combination(x, 2)).sum().writeln();
+}
+
+/// Number of k-combinations
+T combination(T = long)(T n, T k)
+{
+    assert(0 <= k);
+    assert(0 <= n);
+    if (n < k)
+        return 0;
+    k = min(n - k, k);
+    if (k == 0)
+        return 1;
+    if (k == 1)
+        return n;
+    return memoize!combination(n - 1, k - 1) + memoize!combination(n - 1, k);
 }

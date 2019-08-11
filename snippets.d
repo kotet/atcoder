@@ -20,7 +20,7 @@ long[long] factorize(long x)
 }
 
 /// x^^n % m
-T powmod(T=long)(T x, T n, T m)
+T powmod(T = long)(T x, T n, T m)
 {
     if (n < 1)
         return 1;
@@ -77,4 +77,19 @@ struct UnionFind
     {
         return this.find(x) == this.find(y);
     }
+}
+
+/// Number of k-combinations
+T combination(T = long)(T n, T k)
+{
+    assert(0 <= k);
+    assert(0 <= n);
+    if (n < k)
+        return 0;
+    k = min(n - k, k);
+    if (k == 0)
+        return 1;
+    if (k == 1)
+        return n;
+    return memoize!combination(n - 1, k - 1) + memoize!combination(n - 1, k);
 }

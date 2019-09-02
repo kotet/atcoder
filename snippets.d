@@ -19,6 +19,11 @@ long[long] factorize(long x)
     return ps;
 }
 
+T lcm(T)(T a, T b)
+{
+    return (a * b) / gcd(a, b);
+}
+
 /// x^^n % m
 T powmod(T = long)(T x, T n, T m)
 {

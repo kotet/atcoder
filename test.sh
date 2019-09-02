@@ -10,7 +10,6 @@ else
     $BUILD
 fi
 
-
 if [ ! $? = 0 ]; then
     echo "Build failed."
     exit
@@ -18,19 +17,27 @@ fi
 
 echo "Removing old output..."
 mkdir -p output
-rm output/*
+rm -f output/*
 
-for file in `ls input`; do
+if [ "$1" = "gen" ]; then
+    ./generate.sh $NUM
+    INPUTS=$(ls input/ | grep -E "^.*\.random")
+else
+    ./generate.sh clean
+    INPUTS=$(ls input/)
+fi
+
+for file in $INPUTS; do
     echo -n "Testing $file..."
-    timeout 5 ./app < input/$file > output/$file 2>&1
-    if diff -q output/$file answer/$file > /dev/null; then
+    timeout 5 ./app <input/$file >output/$file 2>&1
+    if diff -q output/$file answer/$file >/dev/null; then
         echo "passed."
     else
         echo "failed."
     fi
 done
 
-for file in `ls input`; do
+for file in $INPUTS; do
     bat output/$file
 done
 

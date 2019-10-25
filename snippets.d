@@ -98,3 +98,23 @@ T combination(T = long)(T n, T k)
         return n;
     return memoize!combination(n - 1, k - 1) + memoize!combination(n - 1, k);
 }
+
+/// binary search
+long bsearch(T)(T[] ary, T key)
+{
+    long ok = 0;
+    long ng = ary.length;
+    while (1 < ng - ok)
+    {
+        long m = (ok + ng) / 2;
+        if (ary[m] < key)
+        {
+            ok = m;
+        }
+        else
+        {
+            ng = m;
+        }
+    }
+    return ok;
+}

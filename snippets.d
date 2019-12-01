@@ -19,6 +19,27 @@ long[long] factorize(long x)
     return ps;
 }
 
+/// 素因数分解
+long[] factorize(long x)
+{
+    assert(0 < x, "x is negative");
+    long[] result;
+    while ((x & 1) == 0)
+    {
+        x /= 2;
+        result ~= 2;
+    }
+    for (long i = 3; i * i <= x; i += 2)
+        while (x % i == 0)
+        {
+            x /= i;
+            result ~= i;
+        }
+    if (x != 1)
+        result ~= x;
+    return result;
+}
+
 T lcm(T)(T a, T b)
 {
     return (a * b) / gcd(a, b);

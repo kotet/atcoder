@@ -120,6 +120,36 @@ T combination(T = long)(T n, T k)
     return memoize!combination(n - 1, k - 1) + memoize!combination(n - 1, k);
 }
 
+T combination_mod(T = long)(T n, T k, T m)
+{
+    long a = 1;
+    long b = 1;
+    long c = 1;
+    foreach (i; 1 .. n + 1)
+    {
+        a = (a * i) % m;
+        if (i == k)
+            b = a;
+        if (i == (n - k))
+            c = a;
+    }
+    T powmod(T = long)(T x, T n, T m)
+    {
+        if (n < 1)
+            return 1;
+        if (n & 1)
+        {
+            return x * powmod(x, n - 1, m) % m;
+        }
+        T tmp = powmod(x, n / 2, m);
+        return tmp * tmp % m;
+    }
+
+    long bc = b * c % m;
+    long bc_inv = powmod(bc, m - 2, m);
+    return a * bc_inv % m;
+}
+
 /// binary search
 long bsearch(T)(T[] ary, T key)
 {

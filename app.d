@@ -8,7 +8,7 @@ T[] aryread(T = long)(){return readln.split.to!(T[])();}
 void scan(TList...)(ref TList Args){auto line = readln.split();
 foreach (i, T; TList){T val = line[i].to!(T);Args[i] = val;}}
 alias sread = () => readln.chomp();enum MOD = 10 ^^ 9 + 7;
-alias PQueue = BinaryHeap!(Array!long, "a<b");
+alias PQueue(T, alias less = "a<b") = BinaryHeap!(Array!T, less);
 // dfmt on
 
 void main()

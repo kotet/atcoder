@@ -122,6 +122,8 @@ T combination(T = long)(T n, T k)
 
 T combination_mod(T = long)(T n, T k, T m)
 {
+    if (n < k)
+        return 0;
     long a = 1;
     long b = 1;
     long c = 1;

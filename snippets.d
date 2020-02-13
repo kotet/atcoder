@@ -46,7 +46,7 @@ T lcm(T)(T a, T b)
 }
 
 /// x^^n % m
-T powmod(T = long)(T x, T n, T m)
+T powmod(T = long)(T x, T n, T m = 10 ^^ 9 + 7)
 {
     if (n < 1)
         return 1;
@@ -58,7 +58,7 @@ T powmod(T = long)(T x, T n, T m)
     return tmp * tmp % m;
 }
 
-T invmod(T = long)(T x, T m)
+T invmod(T = long)(T x, T m = 10 ^^ 9 + 7)
 {
     T powmod(T = long)(T x, T n, T m)
     {

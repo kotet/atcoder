@@ -137,36 +137,37 @@ T combination(T = long)(T n, T k)
     return memoize!combination(n - 1, k - 1) + memoize!combination(n - 1, k);
 }
 
-T combination_mod(T = long)(T n, T k, T m)
+/// Number of k-combinations % m (precalculated)
+alias Combination_mod = Combination_modImpl!long;
+struct Combination_modImpl(T)
 {
-    if (n < k)
-        return 0;
-    long a = 1;
-    long b = 1;
-    long c = 1;
-    foreach (i; 1 .. n + 1)
+    T _n, _m;
+    T[] _fact, _factinv;
+    this(T maxnum, T mod = 10 ^^ 9 + 7)
     {
-        a = (a * i) % m;
-        if (i == k)
-            b = a;
-        if (i == (n - k))
-            c = a;
-    }
-    T powmod(T = long)(T x, T n, T m)
-    {
-        if (n < 1)
-            return 1;
-        if (n & 1)
+        _n = maxnum, _m = mod, _fact = new T[](_n + 1), _factinv = new T[](_n + 1), _fact[0] = 1;
+        foreach (i; 1 .. _n + 1)
+            _fact[i] = _fact[i - 1] * i % _m;
+        T powmod(T x, T n, T m)
         {
-            return x * powmod(x, n - 1, m) % m;
+            if (n < 1)
+                return 1;
+            if (n & 1)
+            {
+                return x * powmod(x, n - 1, m) % m;
+            }
+            T tmp = powmod(x, n / 2, m);
+            return tmp * tmp % m;
         }
-        T tmp = powmod(x, n / 2, m);
-        return tmp * tmp % m;
+
+        foreach (i; 0 .. _n + 1)
+            _factinv[i] = powmod(_fact[i], _m - 2, _m);
     }
 
-    long bc = b * c % m;
-    long bc_inv = powmod(bc, m - 2, m);
-    return a * bc_inv % m;
+    T opCall(T n, T k, T dummy = 10 ^^ 9 + 7)
+    {
+        return n < k ? 0 : ((_fact[n] * _factinv[n - k] % _m) * _factinv[k] % _m);
+    }
 }
 
 /// binary search

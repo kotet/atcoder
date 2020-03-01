@@ -189,3 +189,28 @@ long bsearch(T)(T[] ary, T key)
     }
     return ok;
 }
+
+/// BIT (1-indexed)
+alias BinaryIndexedTree = BinaryIndexedTreeImpl!long;
+struct BinaryIndexedTreeImpl(T)
+{
+    T[] _data;
+    this(long n)
+    {
+        _data = new T[](n + 1);
+    }
+
+    T sum(long i)
+    {
+        T ans;
+        for (; 0 < i; i -= (i & -i))
+            ans += _data[i];
+        return ans;
+    }
+
+    void add(long i, T x)
+    {
+        for (; i < _data.length; i += (i & -i))
+            _data[i] += x;
+    }
+}

@@ -75,50 +75,46 @@ T invmod(T = long)(T x, T m = 10 ^^ 9 + 7)
     return powmod(x, m - 2, m);
 }
 
-struct UnionFind
+alias UnionFind = UnionFindImpl!long;
+struct UnionFindImpl(T)
 {
-    private long[] rank;
-    long[] data;
-    long size;
-
-    this(long N)
+    T[] _rank, _data, _size;
+    this(long n)
     {
-        this.rank = new long[](N);
-        this.data = iota!long(N).array;
-        this.size = N;
+        _rank = new long[](n);
+        _size = new long[](n);
+        _size[] = 1;
+        _data = iota!T(n).array();
     }
 
-    long find(long x)
+    T find(T x)
     {
-        if (data[x] == x)
+        if (_data[x] == x)
             return x;
-        long r = this.find(data[x]);
-        data[x] = r;
+        T r = _data[x] = this.find(_data[x]);
         return r;
     }
 
-    void unite(long x, long y)
+    void unite(T x, T y)
     {
-        long rx = this.find(x);
-        long ry = this.find(y);
-        if (rx != ry)
+        T rx = this.find(x), ry = this.find(y);
+        if (rx == ry)
+            return;
+        _size[rx] = _size[ry] = (_size[rx] + _size[ry]);
+        if (_rank[rx] == _rank[ry])
         {
-            this.size--;
-            if (rank[rx] == rank[ry])
-            {
-                data[rx] = ry;
-                rank[ry]++;
-            }
-            else if (rank[rx] < rank[ry])
-                data[rx] = ry;
-            else
-                data[ry] = rx;
+            _data[rx] = ry;
+            _rank[ry]++;
         }
+        else if (_rank[rx] < _rank[ry])
+            _data[rx] = ry;
+        else
+            _data[ry] = rx;
     }
 
-    bool isSame(long x, long y)
+    T size(T x)
     {
-        return this.find(x) == this.find(y);
+        return _size[this.find(x)];
     }
 }
 

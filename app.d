@@ -1,6 +1,4 @@
-import core.bitop, std.algorithm, std.ascii, std.bigint, std.conv, std.math,
-    std.functional, std.numeric, std.range, std.stdio, std.string, std.random,
-    std.typecons, std.container, std.format;
+import std;
 
 // dfmt off
 T lread(T = long)(){return readln.chomp.to!T();}

@@ -1,5 +1,10 @@
-BUILD="sudo docker run --rm -v $PWD:/src -w /src dlang2/dmd-ubuntu:2.091.0 dmd -wi -m64 -O -release -inline -boundscheck=off app.d"
-DEBUG="sudo docker run --rm -v $PWD:/src -w /src dlang2/dmd-ubuntu:2.091.0 dmd -g app.d"
+# 新ジャッジ
+# BUILD="sudo docker run --rm -v $PWD:/src -w /src dlang2/dmd-ubuntu:2.091.0 dmd -wi -m64 -O -release -inline -boundscheck=off app.d"
+# DEBUG="sudo docker run --rm -v $PWD:/src -w /src dlang2/dmd-ubuntu:2.091.0 dmd -g app.d"
+
+# 旧ジャッジ
+BUILD="sudo docker run --rm -v $PWD:/src -w /src dlanguage/dmd:2.070.1 dmd -m64 -w -O -release -inline app.d"
+DEBUG="sudo docker run --rm -v $PWD:/src -w /src dlanguage/dmd:2.070.1 dmd -g app.d"
 
 echo "Building..."
 if [ "$1" = "debug" ]; then

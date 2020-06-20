@@ -1,40 +1,26 @@
-/// 素因数分解
-long[long] factorize(long x)
+T[U] factorize(T = long, U = long)(T x)
 {
     assert(0 < x, "x is negative");
     long[long] ps;
     while ((x & 1) == 0)
-    {
-        x /= 2;
-        ps[2] = (2 in ps) ? ps[2] + 1 : 1;
-    }
+        x /= 2, ps[2] = (2 in ps) ? ps[2] + 1 : 1;
     for (long i = 3; i * i <= x; i += 2)
         while (x % i == 0)
-        {
-            x /= i;
-            ps[i] = (i in ps) ? ps[i] + 1 : 1;
-        }
+            x /= i, ps[i] = (i in ps) ? ps[i] + 1 : 1;
     if (x != 1)
         ps[x] = (x in ps) ? ps[x] + 1 : 1;
     return ps;
 }
 
-/// 素因数分解
-long[] factorize(long x)
+T[] factorize(T = long)(T x)
 {
     assert(0 < x, "x is negative");
-    long[] result;
+    T[] result;
     while ((x & 1) == 0)
-    {
-        x /= 2;
-        result ~= 2;
-    }
-    for (long i = 3; i * i <= x; i += 2)
+        x /= 2, result ~= 2;
+    for (T i = 3; i * i <= x; i += 2)
         while (x % i == 0)
-        {
-            x /= i;
-            result ~= i;
-        }
+            x /= i, result ~= i;
     if (x != 1)
         result ~= x;
     return result;

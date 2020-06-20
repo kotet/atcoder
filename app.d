@@ -8,24 +8,4 @@ static immutable MOD=10^^9+7;alias PQueue(T,alias l="b<a")=BinaryHeap!(Array!T,l
 
 void main()
 {
-    long N, M, X;
-    scan(N, M, X);
-    auto CA = new long[][](N);
-    foreach (i; 0 .. N)
-        CA[i] = aryread();
-    long ans = long.max;
-    foreach (s; 1 .. (1 << N))
-    {
-        long cost;
-        auto m = new long[](M);
-        foreach (i; 0 .. N)
-            if (s & (1 << i))
-            {
-                cost += CA[i][0];
-                m[] += CA[i][1 .. $][];
-            }
-        if (m.all!(x => X <= x))
-            ans = ans.min(cost);
-    }
-    writeln(ans == long.max ? -1 : ans);
 }

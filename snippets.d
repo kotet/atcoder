@@ -152,26 +152,6 @@ struct Combination_modImpl(T)
     }
 }
 
-/// binary search
-long bsearch(T)(T[] ary, T key)
-{
-    long ok = 0;
-    long ng = ary.length;
-    while (1 < ng - ok)
-    {
-        long m = (ok + ng) / 2;
-        if (ary[m] < key)
-        {
-            ok = m;
-        }
-        else
-        {
-            ng = m;
-        }
-    }
-    return ok;
-}
-
 /// BIT (1-indexed)
 alias BinaryIndexedTree = BinaryIndexedTreeImpl!long;
 struct BinaryIndexedTreeImpl(T)

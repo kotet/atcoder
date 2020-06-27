@@ -61,24 +61,21 @@ T invmod(T = long)(T x, T m = 10 ^^ 9 + 7)
     return powmod(x, m - 2, m);
 }
 
-alias UnionFind = UnionFindImpl!long;
-struct UnionFindImpl(T)
+struct UnionFind
 {
-    T[] _rank, _data, _size;
-    this(long n)
+    alias T = long;
+    T[] rank, parent, sizes;
+    this(T n)
     {
-        _rank = new long[](n);
-        _size = new long[](n);
-        _size[] = 1;
-        _data = iota!T(n).array();
+        rank = new T[](n);
+        sizes = new T[](n);
+        sizes[] = 1;
+        parent = iota!T(n).array();
     }
 
     T find(T x)
     {
-        if (_data[x] == x)
-            return x;
-        T r = _data[x] = this.find(_data[x]);
-        return r;
+        return (this.parent[x] == x) ? x : (this.parent[x] = this.find(this.parent[x]));
     }
 
     void unite(T x, T y)
@@ -86,21 +83,18 @@ struct UnionFindImpl(T)
         T rx = this.find(x), ry = this.find(y);
         if (rx == ry)
             return;
-        _size[rx] = _size[ry] = (_size[rx] + _size[ry]);
-        if (_rank[rx] == _rank[ry])
-        {
-            _data[rx] = ry;
-            _rank[ry]++;
-        }
-        else if (_rank[rx] < _rank[ry])
-            _data[rx] = ry;
+        this.sizes[rx] = this.sizes[ry] = this.sizes[rx] + this.sizes[ry];
+        if (this.rank[rx] == this.rank[ry])
+            this.parent[rx] = ry, this.rank[ry]++;
+        else if (this.rank[rx] < this.rank[ry])
+            this.parent[rx] = ry;
         else
-            _data[ry] = rx;
+            this.parent[ry] = rx;
     }
 
     T size(T x)
     {
-        return _size[this.find(x)];
+        return this.sizes[this.find(x)];
     }
 }
 

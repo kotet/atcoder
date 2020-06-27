@@ -41,4 +41,4 @@ for file in $INPUTS; do
     bat output/$file
 done
 
-rm -f app app.o
+rm -f app app.o app.d.cg

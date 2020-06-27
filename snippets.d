@@ -31,34 +31,40 @@ T lcm(T)(T a, T b)
     return (a * b) / gcd(a, b);
 }
 
-/// x^^n % m
-T powmod(T = long)(T x, T n, T m = 10 ^^ 9 + 7)
-{
-    if (n < 1)
-        return 1;
-    if (n & 1)
-    {
-        return x * powmod(x, n - 1, m) % m;
-    }
-    T tmp = powmod(x, n / 2, m);
-    return tmp * tmp % m;
-}
+alias powmod = (long x, long n, long m = 10 ^^ 9 + 7) => std.math.powmod(
+        cast(ulong) x, cast(ulong) n, cast(ulong) m);
+alias invmod = (long x, long n, long m = 10 ^^ 9 + 7) => powmod(x, m - 2, m);
 
-T invmod(T = long)(T x, T m = 10 ^^ 9 + 7)
+// modint
+struct Mod
 {
-    T powmod(T = long)(T x, T n, T m)
+    alias T = long;
+    T data, m;
+    alias data this;
+    this(T x, T m = 10 ^^ 9 + 7)
     {
-        if (n < 1)
-            return 1;
-        if (n & 1)
-        {
-            return x * powmod(x, n - 1, m) % m;
-        }
-        T tmp = powmod(x, n / 2, m);
-        return tmp * tmp % m;
+        this.data = x;
+        this.m = m;
     }
 
-    return powmod(x, m - 2, m);
+    Mod opBinary(string op, R)(R rhs)
+    {
+        static if (op == "-")
+            return Mod((m + data - rhs) % m, m);
+        static if (op == "^^")
+            return Mod(std.math.powmod(cast(ulong) data, cast(ulong) rhs, cast(ulong) m), m);
+        static if (op == "/")
+            return Mod(data * std.math.powmod(cast(ulong) rhs, cast(ulong) m - 2, cast(ulong) m) % m,
+                    m);
+        return Mod(mixin("data " ~ op ~ " rhs") % m, m);
+    }
+
+    Mod opUnary(string op)()
+    {
+        static if (op == "-")
+            return Mod((m + data - 1) % m, m);
+        return Mod(mixin(op ~ "data") % m, m);
+    }
 }
 
 struct UnionFind
